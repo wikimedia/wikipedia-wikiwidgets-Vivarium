@@ -1,0 +1,23 @@
+/**
+ * Localisation to Spanish of the Vivarium widget
+ */
+{
+	'cell-button': 'Celda',
+	'cell-button-tooltip': 'Agregar o quitar celdas',
+	'move-button': 'Mover',
+	'move-button-tooltip': 'Mover el tablero',
+	'zoom-in-button': 'Acercar',
+	'zoom-in-button-tooltip': 'Acercar',
+	'zoom-out-button': 'Alejar',
+	'zoom-out-button-tooltip': 'Alejar',
+	'grid-button': 'Grilla',
+	'grid-button-tooltip': 'Grilla',
+	'reset-button': 'Reiniciar',
+	'reset-button-tooltip': 'Reiniciar',
+	'play-button': 'Reproducir',
+	'play-button-tooltip': 'Reproducir',
+	'pause-button': 'Pausar',
+	'pause-button-tooltip': 'Pausar',
+	'next-button': 'Siguiente',
+	'next-button-tooltip': 'Generación siguiente',
+}

@@ -1,0 +1,30 @@
+.VivariumCanvas {
+	background: black;
+	display: block;
+}
+
+.VivariumMenu {
+	margin: 5px 0;
+}
+
+.VivariumMenu .button {
+	cursor: pointer;
+	display: inline;
+	margin-right: 10px;
+	padding: 5px;
+}
+
+.VivariumMenu .button.active {
+	background: #a7dcff;
+}
+
+.VivariumMenu .button.disabled {
+	cursor: default;
+	opacity: .3;
+}
+
+.VivariumGenerationCounter {
+	float: right;
+	line-height: 16px;
+	padding: 5px;
+}

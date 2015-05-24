@@ -1,0 +1,23 @@
+/**
+ * Localisation to English of the Formicarium widget
+ */
+{
+	'cell-button': 'Cell',
+	'cell-button-tooltip': 'Add or remove cells',
+	'move-button': 'Move',
+	'move-button-tooltip': 'Move the board',
+	'zoom-in-button': 'Zoom in',
+	'zoom-in-button-tooltip': 'Zoom in',
+	'zoom-out-button': 'Zoom out',
+	'zoom-out-button-tooltip': 'Zoom out',
+	'grid-button': 'Grid',
+	'grid-button-tooltip': 'Grid',
+	'reset-button': 'Reset',
+	'reset-button-tooltip': 'Reset',
+	'play-button': 'Play',
+	'play-button-tooltip': 'Play',
+	'pause-button': 'Pause',
+	'pause-button-tooltip': 'Pause',
+	'next-button': 'Next',
+	'next-button-tooltip': 'Next generation',
+}

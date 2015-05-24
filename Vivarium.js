@@ -135,8 +135,9 @@ var Vivarium = {
 
 			// Set the variables that must wait for the DOM to be loaded
 			Vivarium.board.setCanvas( canvas[0] );
-			Vivarium.board.setWidth( wikiwidget.width() );
-			Vivarium.board.setHeight( wikiwidget.height() );
+			Vivarium.board.setWidth( wikiwidget.attr( 'data-width' ) );
+			Vivarium.board.setHeight( wikiwidget.attr( 'data-height' ) );
+			wikiwidget.width( Vivarium.board.width );
 
 			// Bind events
 			canvas.mousedown( function ( event ) {
@@ -147,11 +148,13 @@ var Vivarium = {
 				Vivarium.mouse.up( event );
 			});
 			moveButton.click( function () {
+				$( this ).addClass( 'active' ).siblings().removeClass( 'active' );
 				Vivarium.mouse.downAction = null;
 				Vivarium.mouse.dragAction = 'moveBoard';
 				Vivarium.mouse.upAction = null;
 			});
 			cellButton.click( function () {
+				$( this ).addClass( 'active' ).siblings().removeClass( 'active' );
 				Vivarium.mouse.downAction = 'addRemoveCell';
 				Vivarium.mouse.dragAction = 'addRemoveCell';
 				Vivarium.mouse.upAction = null;
@@ -178,35 +181,7 @@ var Vivarium = {
 				Vivarium.board.grid = Vivarium.board.grid === true ? false : true;
 				Vivarium.board.refill();
 			});
-			$( '.button', menu ).click( function () {
-				Vivarium.gui.update();
-			});
-		},
-
-		/**
-		 * Updates the state of all the GUI elements
-		 */
-		update: function () {
-			$( '.VivariumGenerationCounter' ).text( Vivarium.game.generation );
-
-			$( '.VivariumMenu .button' ).removeClass( 'disabled active' );
-
-			if ( Vivarium.mouse.dragAction === 'moveBoard' ) {
-				$( '.VivariumMoveButton' ).addClass( 'active' );
-			}
-			if ( Vivarium.mouse.dragAction === 'addRemoveCell' ) {
-				$( '.VivariumCellButton' ).addClass( 'active' );
-			}
-			if ( Vivarium.board.cellSize < 4 ) {
-				$( '.VivariumGridButton' ).addClass( 'disabled' );
-			}
-			if ( Vivarium.board.cellSize === 1 ) {
-				$( '.VivariumZoomOutButton' ).addClass( 'disabled' );
-			}
-			if ( Vivarium.board.cellSize === 32 ) {
-				$( '.VivariumZoomInButton' ).addClass( 'disabled' );
-			}
-		},
+		}
 	},
 
 	game: {
@@ -221,7 +196,7 @@ var Vivarium = {
 
 		setGeneration: function ( value ) {
 			this.generation = value;
-			Vivarium.gui.update();
+			$( '.VivariumGenerationCounter' ).text( Vivarium.game.generation );
 		},
 
 		/* Actions */

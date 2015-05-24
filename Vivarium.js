@@ -206,37 +206,36 @@ var Vivarium = {
 		 */
 		next: function () {
 			Vivarium.game.setGeneration( Vivarium.game.generation + 1 );
-			Vivarium.board.previousLiveCoords = Vivarium.board.currentLiveCoords.slice(); // Clone
-			var liveCoords = Vivarium.board.previousLiveCoords,
-				neighboringCoords,
-				relevantCoords = liveCoords, // The relevant coordinates are the live ones plus their neighbors minus the duplicates
+			Vivarium.board.previousLiveCells = Vivarium.board.currentLiveCells.slice(); // Clone
+			var liveCells = Vivarium.board.previousLiveCells,
 				coords,
+				neighbors,
+				relevantCells = liveCells, // The relevant cells are the live ones plus their neighbors minus the duplicates
+				seen = [],
 				state,
 				liveNeighborCount;
-			for ( var i = 0, len = liveCoords.length; i < len; i++ ) {
-				neighboringCoords = Vivarium.board.getNeighboringCoords( liveCoords[ i ] );
-				relevantCoords = relevantCoords.concat( neighboringCoords.filter( function ( coords ) {
-					return relevantCoords.indexOf( coords ) < 0; // Remove duplicates
-				}));
+			for ( var i = 0, len = liveCells.length; i < len; i++ ) {
+				coords = liveCells[ i ];
+				neighbors = Vivarium.board.getNeighbors( coords );
+				relevantCells = relevantCells.concat( neighbors );
 			}
-			for ( var i = 0, len = relevantCoords.length; i < len; i++ ) {
-				coords = relevantCoords[ i ];
+			for ( var i = 0, len = relevantCells.length; i < len; i++ ) {
+				coords = relevantCells[ i ];
+				if ( seen.indexOf( coords ) > -1 ) {
+					continue; // Ignore duplicates
+				}
+				seen.push( coords );
 				state = Vivarium.board.getState( coords );
 				liveNeighborCount = Vivarium.board.getLiveNeighborCount( coords );
-				// Death by underpopulation
-				if ( state === 1 && liveNeighborCount < 2 ) {
-					Vivarium.board.removeCell( relevantCoords[ i ] );
-				}
-				// Death by overpopulation
-				else if ( state === 1 && liveNeighborCount > 3 ) {
-					Vivarium.board.removeCell( relevantCoords[ i ] );
+				// Death by underpopulation or overpopulation
+				if ( state === 1 && ( liveNeighborCount < 2 || liveNeighborCount > 3 ) ) {
+					Vivarium.board.removeCell( coords );
 				}
 				// Reproduction
 				else if ( state === 0 && liveNeighborCount === 3 ) {
-					Vivarium.board.addCell( relevantCoords[ i ] );
+					Vivarium.board.addCell( coords );
 				}
 			}
-			Vivarium.board.refill();
 		},
 
 		play: function () {
@@ -267,7 +266,7 @@ var Vivarium = {
 			var board = Vivarium.board;
 			board.centerX = 0;
 			board.centerY = 0;
-			board.currentLiveCoords = [];
+			board.currentLiveCells = [];
 			board.refill();
 		}
 	},
@@ -344,12 +343,11 @@ var Vivarium = {
 		addRemoveCell: function ( event ) {
 			Vivarium.game.pause();
 			var coords = this.currentX + ',' + this.currentY;
-			if ( Vivarium.board.currentLiveCoords.indexOf( coords ) === -1 ) {
+			if ( Vivarium.board.getState( coords ) === 0 ) {
 				Vivarium.board.addCell( coords );
 			} else {
 				Vivarium.board.removeCell( coords );
 			}
-			Vivarium.board.refill();
 		}
 	},
 
@@ -372,10 +370,10 @@ var Vivarium = {
 		grid: false,
 
 		/**
-		 * These arrays hold the coordinates of the LIVE cells
+		 * These arrays hold the coordinates of the live cells
 		 */
-		currentLiveCoords: [],
-		previousLiveCoords: [],
+		currentLiveCells: [],
+		previousLiveCells: [],
 
 		/* Getters */
 
@@ -392,7 +390,7 @@ var Vivarium = {
 		 * and returns the state of the cell
 		 */
 		getState: function ( coords ) {
-			if ( Vivarium.board.previousLiveCoords.indexOf( coords ) < 0 ) {
+			if ( Vivarium.board.previousLiveCells.indexOf( coords ) === -1 ) {
 				return 0; // Dead
 			}
 			return 1; // Alive
@@ -402,7 +400,7 @@ var Vivarium = {
 		 * Takes a string of coordinates (like "23,-75")
 		 * and returns an array with the neighboring coordinates
 		 */
-		getNeighboringCoords: function ( coords ) {
+		getNeighbors: function ( coords ) {
 			coords = coords.split( ',' );
 			var x = parseInt( coords[0] ),
 				y = parseInt( coords[1] );
@@ -423,10 +421,10 @@ var Vivarium = {
 		 * and returns the number of live neighbors
 		 */
 		getLiveNeighborCount: function ( coords ) {
-			var neighboringCoords = Vivarium.board.getNeighboringCoords( coords ),
+			var neighbors = Vivarium.board.getNeighbors( coords ),
 				liveNeighborCount = 0;
-			for ( var i = 0, len = neighboringCoords.length; i < len; i++ ) {
-				if ( Vivarium.board.previousLiveCoords.indexOf( neighboringCoords[ i ] ) > -1 ) {
+			for ( var i = 0, len = neighbors.length; i < len; i++ ) {
+				if ( Vivarium.board.previousLiveCells.indexOf( neighbors[ i ] ) > -1 ) {
 					liveNeighborCount++;
 				}
 			}
@@ -494,8 +492,8 @@ var Vivarium = {
 		},
 
 		fill: function () {
-			for ( var i = 0, len = this.currentLiveCoords.length; i < len; i++ ) {
-				Vivarium.board.fillCell( this.currentLiveCoords[ i ] );
+			for ( var i = 0, len = this.currentLiveCells.length; i < len; i++ ) {
+				Vivarium.board.fillCell( this.currentLiveCells[ i ] );
 			}
 			if ( this.grid ) {
 				this.drawGrid();
@@ -524,19 +522,39 @@ var Vivarium = {
 			}
 			var rectX = Math.abs( this.centerX - Math.floor( this.xCells / 2 ) - x ) * this.cellSize,
 				rectY = Math.abs( this.centerY - Math.floor( this.yCells / 2 ) - y ) * this.cellSize,
-				rectW = this.cellSize,
-				rectH = this.cellSize;
+				rectW = this.cellSize - ( this.grid && this.cellSize >= 4 ? 1 : 0 ), // Don't overwrite the grid
+				rectH = this.cellSize - ( this.grid && this.cellSize >= 4 ? 1 : 0 );
 			this.context.fillStyle = 'white';
 			this.context.fillRect( rectX, rectY, rectW, rectH );
 		},
 
+		clearCell: function ( coords ) {
+			var coords = coords.split( ',' ),
+				x = coords[0],
+				y = coords[1],
+				minX = this.centerX - Math.floor( this.xCells / 2 ),
+				minY = this.centerY - Math.floor( this.yCells / 2 ),
+				maxX = minX + this.xCells,
+				maxY = minY + this.yCells;
+			if ( x < minX || y < minY || x > maxX || y > maxY ) {
+				return; // If the cell is beyond view, there's no need to erase it
+			}
+			var rectX = Math.abs( this.centerX - Math.floor( this.xCells / 2 ) - x ) * this.cellSize,
+				rectY = Math.abs( this.centerY - Math.floor( this.yCells / 2 ) - y ) * this.cellSize,
+				rectW = this.cellSize - ( this.grid && this.cellSize >= 4 ? 1 : 0 ), // Don't erase the grid
+				rectH = this.cellSize - ( this.grid && this.cellSize >= 4 ? 1 : 0 );
+			this.context.clearRect( rectX, rectY, rectW, rectH );
+		},
+
 		addCell: function ( coords ) {
-			this.currentLiveCoords.push( coords );
+			this.currentLiveCells.push( coords );
+			this.fillCell( coords );
 		},
 
 		removeCell: function ( coords ) {
-			var index = this.currentLiveCoords.indexOf( coords );
-			this.currentLiveCoords.splice( index, 1 ); // Remove the coords from the array
+			var index = this.currentLiveCells.indexOf( coords );
+			this.currentLiveCells.splice( index, 1 ); // Remove the coords from the array
+			this.clearCell( coords );
 		}
 	}
 }

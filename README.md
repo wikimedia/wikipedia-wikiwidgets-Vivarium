@@ -9,6 +9,8 @@ None known!
 
 Tasks
 -----
+* Code documentation
+* Localization to main languages
 * Random start, or leave the acorn?
 * Preloaded patterns
 * Optimise, optimise, optimise!

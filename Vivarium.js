@@ -342,7 +342,7 @@ var Vivarium = {
 
 		addRemoveCell: function ( event ) {
 			Vivarium.game.pause();
-			var coords = this.currentX + ',' + this.currentY;
+			var coords = String( this.currentX + ',' + this.currentY );
 			if ( Vivarium.board.getState( coords ) === 0 ) {
 				Vivarium.board.addCell( coords );
 			} else {

@@ -54,8 +54,6 @@ var Vivarium = {
 		for ( var i = 0; i < seed.length; i++ ) {
 			Vivarium.board.addCell( seed[ i ] );
 		}
-		Vivarium.board.fill();
-		Vivarium.game.play();
 	},
 
 	gui: {

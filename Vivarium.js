@@ -133,8 +133,8 @@ var Vivarium = {
 
 			// Set the variables that must wait for the DOM to be loaded
 			Vivarium.board.setCanvas( canvas[0] );
-			Vivarium.board.setWidth( wikiwidget.attr( 'data-width' ) );
-			Vivarium.board.setHeight( wikiwidget.attr( 'data-height' ) );
+			Vivarium.board.setWidth( 400 );
+			Vivarium.board.setHeight( 300 );
 			wikiwidget.width( Vivarium.board.width );
 
 			// Bind events

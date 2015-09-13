@@ -13,6 +13,5 @@ Tasks
 * Localization to main languages
 * Random start, or leave the acorn?
 * Preloaded patterns
-* Optimise, optimise, optimise!
+* Optimise!
 * Generalize so that more than one widget can be placed in the same page
-* Keep the messages array in its own file

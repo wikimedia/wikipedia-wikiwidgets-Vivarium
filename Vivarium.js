@@ -8,41 +8,56 @@
  */
 var Vivarium = {
 
-	/**
-	 * Localisation to Spanish
-	 */
 	messages: {
-		'cell-button': 'Celda',
-		'cell-button-tooltip': 'Agregar o quitar celdas',
-		'move-button': 'Mover',
-		'move-button-tooltip': 'Mover el tablero',
-		'zoom-in-button': 'Acercar',
-		'zoom-in-button-tooltip': 'Acercar',
-		'zoom-out-button': 'Alejar',
-		'zoom-out-button-tooltip': 'Alejar',
-		'grid-button': 'Grilla',
-		'grid-button-tooltip': 'Grilla',
-		'reset-button': 'Reiniciar',
-		'reset-button-tooltip': 'Reiniciar',
-		'play-button': 'Reproducir',
-		'play-button-tooltip': 'Reproducir',
-		'pause-button': 'Pausar',
-		'pause-button-tooltip': 'Pausar',
-		'next-button': 'Siguiente',
-		'next-button-tooltip': 'Generación siguiente',
+		'es': {
+			'cell-button': 'Celda',
+			'cell-button-tooltip': 'Agregar o quitar celdas',
+			'move-button': 'Mover',
+			'move-button-tooltip': 'Mover el tablero',
+			'zoom-in-button': 'Acercar',
+			'zoom-in-button-tooltip': 'Acercar',
+			'zoom-out-button': 'Alejar',
+			'zoom-out-button-tooltip': 'Alejar',
+			'grid-button': 'Grilla',
+			'grid-button-tooltip': 'Grilla',
+			'reset-button': 'Reiniciar',
+			'reset-button-tooltip': 'Reiniciar',
+			'play-button': 'Reproducir',
+			'play-button-tooltip': 'Reproducir',
+			'pause-button': 'Pausar',
+			'pause-button-tooltip': 'Pausar',
+			'next-button': 'Siguiente',
+			'next-button-tooltip': 'Generación siguiente',
+		},
+		'en': {
+			'cell-button': 'Cell',
+			'cell-button-tooltip': 'Add or remove cells',
+			'move-button': 'Move',
+			'move-button-tooltip': 'Move the board',
+			'zoom-in-button': 'Zoom in',
+			'zoom-in-button-tooltip': 'Zoom in',
+			'zoom-out-button': 'Zoom out',
+			'zoom-out-button-tooltip': 'Zoom out',
+			'grid-button': 'Grid',
+			'grid-button-tooltip': 'Grid',
+			'reset-button': 'Reset',
+			'reset-button-tooltip': 'Reset',
+			'play-button': 'Play',
+			'play-button-tooltip': 'Play',
+			'pause-button': 'Pause',
+			'pause-button-tooltip': 'Pause',
+			'next-button': 'Next',
+			'next-button-tooltip': 'Next generation',
+		},
 	}, 
 
 	/**
-	 * Convenience method that returns a localised message for the given key
-	 */
-	getMessage: function( key ) {
-		return this.messages[ key ];
-	},
-
-	/**
-	 * Initialise Vivarium
+	 * Initialisation script
 	 */
 	init: function () {
+		// Set the interface messages
+		mw.messages.set( Vivarium.messages[ mw.config.get( 'wgUserLanguage' ) ] );
+
 		// Build the GUI and bind the events
 		Vivarium.gui.buildAndBind()
 
@@ -51,7 +66,7 @@ var Vivarium = {
 
 		// Start with the "acorn" seed pattern
 		var seed = [ "0,0", "-1,0", "0,1", "1,0", "-1,-1" ];
-		for ( var i = 0; i < seed.length; i++ ) {
+		for ( var i in seed ) {
 			Vivarium.board.addCell( seed[ i ] );
 		}
 	},
@@ -65,56 +80,56 @@ var Vivarium = {
 			var cellButton = $( '<img>' ).attr({
 				'class': 'button VivariumCellButton',
 				'src': '//upload.wikimedia.org/wikipedia/commons/f/ff/WikiWidgetCellButton.png',
-				'title': Vivarium.getMessage( 'cell-button-tooltip' ),
-				'alt': Vivarium.getMessage( 'cell-button' )
+				'title': mw.message( 'cell-button-tooltip' ),
+				'alt': mw.message( 'cell-button' )
 			});
 			var moveButton = $( '<img>' ).attr({
 				'class': 'button VivariumMoveButton',
 				'src': '//upload.wikimedia.org/wikipedia/commons/1/15/WikiWidgetMoveButton.png',
-				'title': Vivarium.getMessage( 'move-button-tooltip' ),
-				'alt': Vivarium.getMessage( 'move-button' )
+				'title': mw.message( 'move-button-tooltip' ),
+				'alt': mw.message( 'move-button' )
 			});
 			var zoomInButton = $( '<img>' ).attr({
 				'class': 'button VivariumZoomInButton',
 				'src': '//upload.wikimedia.org/wikipedia/commons/2/2e/WikiWidgetZoomInButton.png',
-				'title': Vivarium.getMessage( 'zoom-in-button-tooltip' ),
-				'alt': Vivarium.getMessage( 'zoom-in-button' )
+				'title': mw.message( 'zoom-in-button-tooltip' ),
+				'alt': mw.message( 'zoom-in-button' )
 			});
 			var zoomOutButton = $( '<img>' ).attr({
 				'class': 'button VivariumZoomOutButton',
 				'src': '//upload.wikimedia.org/wikipedia/commons/6/63/WikiWidgetZoomOutButton.png',
-				'title': Vivarium.getMessage( 'zoom-out-button-tooltip' ),
-				'alt': Vivarium.getMessage( 'zoom-out-button' )
+				'title': mw.message( 'zoom-out-button-tooltip' ),
+				'alt': mw.message( 'zoom-out-button' )
 			});
 			var gridButton = $( '<img>' ).attr({
 				'class': 'button VivariumGridButton',
 				'src': '//upload.wikimedia.org/wikipedia/commons/a/a9/WikiWidgetGridButton.png',
-				'title': Vivarium.getMessage( 'grid-button-tooltip' ),
-				'alt': Vivarium.getMessage( 'grid-button' )
+				'title': mw.message( 'grid-button-tooltip' ),
+				'alt': mw.message( 'grid-button' )
 			});
 			var resetButton = $( '<img>' ).attr({
 				'class': 'button VivariumResetButton',
 				'src': '//upload.wikimedia.org/wikipedia/commons/0/0e/WikiWidgetResetButton.png',
-				'title': Vivarium.getMessage( 'reset-button-tooltip' ),
-				'alt': Vivarium.getMessage( 'reset-button' )
+				'title': mw.message( 'reset-button-tooltip' ),
+				'alt': mw.message( 'reset-button' )
 			});
 			var playButton = $( '<img>' ).attr({
 				'class': 'button VivariumPlayButton',
 				'src': '//upload.wikimedia.org/wikipedia/commons/b/b8/WikiWidgetPlayButton.png',
-				'title': Vivarium.getMessage( 'play-button-tooltip' ),
-				'alt': Vivarium.getMessage( 'play-button' )
+				'title': mw.message( 'play-button-tooltip' ),
+				'alt': mw.message( 'play-button' )
 			});
 			var pauseButton = $( '<img>' ).attr({
 				'class': 'button VivariumPauseButton',
 				'src': '//upload.wikimedia.org/wikipedia/commons/6/6e/WikiWidgetPauseButton.png',
-				'title': Vivarium.getMessage( 'pause-button-tooltip' ),
-				'alt': Vivarium.getMessage( 'pause-button' )
+				'title': mw.message( 'pause-button-tooltip' ),
+				'alt': mw.message( 'pause-button' )
 			}).hide(); // The pause button starts hidden
 			var nextButton = $( '<img>' ).attr({
 				'class': 'button VivariumNextButton',
 				'src': '//upload.wikimedia.org/wikipedia/commons/b/bf/WikiWidgetNextFrameButton.png',
-				'title': Vivarium.getMessage( 'next-button-tooltip' ),
-				'alt': Vivarium.getMessage( 'next-button' )
+				'title': mw.message( 'next-button-tooltip' ),
+				'alt': mw.message( 'next-button' )
 			});
 			var generationCounter = $( '<span>' ).attr( 'class', 'VivariumGenerationCounter' ).text( 0 );
 

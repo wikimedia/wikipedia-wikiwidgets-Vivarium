@@ -223,7 +223,7 @@ var Vivarium = {
 					continue; // Ignore duplicates
 				}
 				seen.push( coords );
-				state = Vivarium.board.getState( coords );
+				state = Vivarium.board.getPreviousState( coords );
 				liveNeighborCount = Vivarium.board.getLiveNeighborCount( coords );
 				// Death by underpopulation or overpopulation
 				if ( state === 1 && ( liveNeighborCount < 2 || liveNeighborCount > 3 ) ) {
@@ -333,7 +333,7 @@ var Vivarium = {
 			Vivarium.board.centerY += this.previousY - this.currentY;
 			Vivarium.board.refill();
 
-			// Bugfix: without the following, the board flickers when moving, not sure why
+			// Bugfix: without this, the board flickers when moving, not sure why
 			this.currentX = this.getCurrentX( event );
 			this.currentY = this.getCurrentY( event );
 		},
@@ -341,7 +341,7 @@ var Vivarium = {
 		addRemoveCell: function ( event ) {
 			Vivarium.game.pause();
 			var coords = String( this.currentX + ',' + this.currentY );
-			if ( Vivarium.board.getState( coords ) === 0 ) {
+			if ( Vivarium.board.getCurrentState( coords ) === 0 ) {
 				Vivarium.board.addCell( coords );
 			} else {
 				Vivarium.board.removeCell( coords );
@@ -387,7 +387,13 @@ var Vivarium = {
 		 * Takes a string of coordinates (like "23,-75")
 		 * and returns the state of the cell
 		 */
-		getState: function ( coords ) {
+		getCurrentState: function ( coords ) {
+			if ( Vivarium.board.currentLiveCells.indexOf( coords ) === -1 ) {
+				return 0; // Dead
+			}
+			return 1; // Alive
+		},
+		getPreviousState: function ( coords ) {
 			if ( Vivarium.board.previousLiveCells.indexOf( coords ) === -1 ) {
 				return 0; // Dead
 			}
@@ -527,6 +533,7 @@ var Vivarium = {
 		},
 
 		clearCell: function ( coords ) {
+			console.log(2);
 			var coords = coords.split( ',' ),
 				x = coords[0],
 				y = coords[1],
@@ -535,6 +542,7 @@ var Vivarium = {
 				maxX = minX + this.xCells,
 				maxY = minY + this.yCells;
 			if ( x < minX || y < minY || x > maxX || y > maxY ) {
+			console.log(1);
 				return; // If the cell is beyond view, there's no need to erase it
 			}
 			var rectX = Math.abs( this.centerX - Math.floor( this.xCells / 2 ) - x ) * this.cellSize,
@@ -550,6 +558,7 @@ var Vivarium = {
 		},
 
 		removeCell: function ( coords ) {
+			console.log(3);
 			var index = this.currentLiveCells.indexOf( coords );
 			this.currentLiveCells.splice( index, 1 ); // Remove the coords from the array
 			this.clearCell( coords );

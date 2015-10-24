@@ -7,14 +7,14 @@
 	margin: 5px 0;
 }
 
-.VivariumMenu .button {
+.VivariumButton {
 	cursor: pointer;
 	display: inline;
 	margin-right: 7px;
 	padding: 5px;
 }
 
-.VivariumMenu .button.active {
+.VivariumButton.active {
 	background: #a7dcff;
 }
 

@@ -61,11 +61,11 @@ var Vivarium = {
 		// Build the GUI and bind the events
 		Vivarium.gui.buildAndBind()
 
-		// Add cells as the default action 
-		$( '.VivariumCellButton' ).click();
+		// Set the default action 
+		Vivarium.gui.clickCellButton();
 
 		// Start with the "acorn" seed pattern
-		var seed = [ "0,0", "-1,0", "0,1", "1,0", "-1,-1" ];
+		var seed = [ '0,0', '-1,0', '0,1', '1,0', '-1,-1' ];
 		for ( var i in seed ) {
 			Vivarium.board.addCell( seed[ i ] );
 		}
@@ -73,65 +73,65 @@ var Vivarium = {
 
 	gui: {
 		buildAndBind: function () {
-			var wikiwidget = $( '.WikiWidget[data-wikiwidget="Vivarium"]' );
-			var canvas = $( '<canvas>' ).attr( 'class', 'VivariumCanvas' );
-			var menu = $( '<div>' ).attr( 'class', 'VivariumMenu' );
+			var container = $( '.WikiWidget[data-wikiwidget="Vivarium"]' ),
+				canvas = $( '<canvas>' ).addClass( 'VivariumCanvas' ),
+				menu = $( '<div>' ).addClass( 'VivariumMenu' );
 
 			var cellButton = $( '<img>' ).attr({
-				'class': 'button VivariumCellButton',
+				'class': 'VivariumButton VivariumCellButton',
 				'src': '//upload.wikimedia.org/wikipedia/commons/f/ff/WikiWidgetCellButton.png',
 				'title': mw.message( 'cell-button-tooltip' ),
 				'alt': mw.message( 'cell-button' )
 			});
 			var moveButton = $( '<img>' ).attr({
-				'class': 'button VivariumMoveButton',
+				'class': 'VivariumButton VivariumMoveButton',
 				'src': '//upload.wikimedia.org/wikipedia/commons/1/15/WikiWidgetMoveButton.png',
 				'title': mw.message( 'move-button-tooltip' ),
 				'alt': mw.message( 'move-button' )
 			});
 			var zoomInButton = $( '<img>' ).attr({
-				'class': 'button VivariumZoomInButton',
+				'class': 'VivariumButton VivariumZoomInButton',
 				'src': '//upload.wikimedia.org/wikipedia/commons/2/2e/WikiWidgetZoomInButton.png',
 				'title': mw.message( 'zoom-in-button-tooltip' ),
 				'alt': mw.message( 'zoom-in-button' )
 			});
 			var zoomOutButton = $( '<img>' ).attr({
-				'class': 'button VivariumZoomOutButton',
+				'class': 'VivariumButton VivariumZoomOutButton',
 				'src': '//upload.wikimedia.org/wikipedia/commons/6/63/WikiWidgetZoomOutButton.png',
 				'title': mw.message( 'zoom-out-button-tooltip' ),
 				'alt': mw.message( 'zoom-out-button' )
 			});
 			var gridButton = $( '<img>' ).attr({
-				'class': 'button VivariumGridButton',
+				'class': 'VivariumButton VivariumGridButton',
 				'src': '//upload.wikimedia.org/wikipedia/commons/a/a9/WikiWidgetGridButton.png',
 				'title': mw.message( 'grid-button-tooltip' ),
 				'alt': mw.message( 'grid-button' )
 			});
 			var resetButton = $( '<img>' ).attr({
-				'class': 'button VivariumResetButton',
+				'class': 'VivariumButton VivariumResetButton',
 				'src': '//upload.wikimedia.org/wikipedia/commons/0/0e/WikiWidgetResetButton.png',
 				'title': mw.message( 'reset-button-tooltip' ),
 				'alt': mw.message( 'reset-button' )
 			});
 			var playButton = $( '<img>' ).attr({
-				'class': 'button VivariumPlayButton',
+				'class': 'VivariumButton VivariumPlayButton',
 				'src': '//upload.wikimedia.org/wikipedia/commons/b/b8/WikiWidgetPlayButton.png',
 				'title': mw.message( 'play-button-tooltip' ),
 				'alt': mw.message( 'play-button' )
 			});
 			var pauseButton = $( '<img>' ).attr({
-				'class': 'button VivariumPauseButton',
+				'class': 'VivariumButton VivariumPauseButton',
 				'src': '//upload.wikimedia.org/wikipedia/commons/6/6e/WikiWidgetPauseButton.png',
 				'title': mw.message( 'pause-button-tooltip' ),
 				'alt': mw.message( 'pause-button' )
 			}).hide(); // The pause button starts hidden
 			var nextButton = $( '<img>' ).attr({
-				'class': 'button VivariumNextButton',
+				'class': 'VivariumButton VivariumNextButton',
 				'src': '//upload.wikimedia.org/wikipedia/commons/b/bf/WikiWidgetNextFrameButton.png',
 				'title': mw.message( 'next-button-tooltip' ),
 				'alt': mw.message( 'next-button' )
 			});
-			var generationCounter = $( '<span>' ).attr( 'class', 'VivariumGenerationCounter' ).text( 0 );
+			var generationCounter = $( '<span>' ).addClass( 'VivariumGenerationCounter' ).text( 0 );
 
 			// Put it all together
 			menu.append( cellButton )
@@ -144,62 +144,43 @@ var Vivarium = {
 				.append( pauseButton )
 				.append( nextButton )
 				.append( generationCounter );
-			wikiwidget.html( canvas ).append( menu );
+			container.html( canvas ).append( menu );
 
 			// Set the variables that must wait for the DOM to be loaded
 			Vivarium.board.setCanvas( canvas[0] );
 			Vivarium.board.setWidth( 400 );
 			Vivarium.board.setHeight( 300 );
-			wikiwidget.width( Vivarium.board.width );
+			container.width( Vivarium.board.width );
 
 			// Bind events
-			canvas.mousedown( function ( event ) {
-				Vivarium.mouse.down( event );
-			}).mousemove( function ( event ) {
-				Vivarium.mouse.move( event );
-			}).mouseup( function ( event ) {
-				Vivarium.mouse.up( event );
-			});
-			moveButton.click( function () {
-				$( this ).addClass( 'active' ).siblings().removeClass( 'active' );
-				Vivarium.mouse.downAction = null;
-				Vivarium.mouse.dragAction = 'moveBoard';
-				Vivarium.mouse.upAction = null;
-			});
-			cellButton.click( function () {
-				$( this ).addClass( 'active' ).siblings().removeClass( 'active' );
-				Vivarium.mouse.downAction = 'addRemoveCell';
-				Vivarium.mouse.dragAction = 'addRemoveCell';
-				Vivarium.mouse.upAction = null;
-			});
-			resetButton.click( function () {
-				Vivarium.game.reset();
-			});
-			playButton.click( function () {
-				Vivarium.game.play();
-			});
-			pauseButton.click( function () {
-				Vivarium.game.pause();
-			});
-			nextButton.click( function () {
-				Vivarium.game.next();
-			});
-			zoomOutButton.click( function () {
-				Vivarium.board.zoomOut();
-			});
-			zoomInButton.click( function () {
-				Vivarium.board.zoomIn();
-			});
-			gridButton.click( function () {
-				Vivarium.board.grid = Vivarium.board.grid === true ? false : true;
-				Vivarium.board.refill();
-			});
+			canvas.mousedown( Vivarium.mouse.down ).mousemove( Vivarium.mouse.move ).mouseup( Vivarium.mouse.up );
+			moveButton.click( Vivarium.gui.clickMoveButton );
+			cellButton.click( Vivarium.gui.clickCellButton );
+			resetButton.click( Vivarium.game.reset );
+			playButton.click( Vivarium.game.play );
+			pauseButton.click( Vivarium.game.pause );
+			nextButton.click( Vivarium.game.next );
+			zoomOutButton.click( Vivarium.board.zoomOut );
+			zoomInButton.click( Vivarium.board.zoomIn );
+			gridButton.click( Vivarium.board.toggleGrid );
+		},
+
+		clickMoveButton: function () {
+			Vivarium.mouse.onDown = null;
+			Vivarium.mouse.onDrag = Vivarium.moveBoard;
+			Vivarium.mouse.onUp = null;
+			$( '.VivariumMoveButton' ).addClass( 'active' ).siblings().removeClass( 'active' );
+		},
+
+		clickCellButton: function () {
+			Vivarium.mouse.onDown = Vivarium.addRemoveCell;
+			Vivarium.mouse.onDrag = Vivarium.addRemoveCell;
+			Vivarium.mouse.onUp = null;
+			$( '.VivariumCellButton' ).addClass( 'active' ).siblings().removeClass( 'active' );
 		}
 	},
 
 	game: {
-
-		speed: 1000,
 
 		generation: 0,
 
@@ -208,8 +189,8 @@ var Vivarium = {
 		/* Setters */
 
 		setGeneration: function ( value ) {
-			this.generation = value;
-			$( '.VivariumGenerationCounter' ).text( Vivarium.game.generation );
+			Vivarium.game.generation = value;
+			$( '.VivariumGenerationCounter' ).text( value );
 		},
 
 		/* Actions */
@@ -219,8 +200,8 @@ var Vivarium = {
 		 */
 		next: function () {
 			Vivarium.game.setGeneration( Vivarium.game.generation + 1 );
-			Vivarium.board.previousLiveCells = Vivarium.board.currentLiveCells.slice(); // Clone
-			var liveCells = Vivarium.board.previousLiveCells,
+			Vivarium.board.oldLiveCells = Vivarium.board.newLiveCells.slice(); // Clone the array
+			var liveCells = Vivarium.board.oldLiveCells,
 				coords,
 				neighbors,
 				relevantCells = liveCells, // The relevant cells are the live ones plus their neighbors minus the duplicates
@@ -238,7 +219,7 @@ var Vivarium = {
 					continue; // Ignore duplicates
 				}
 				seen.push( coords );
-				state = Vivarium.board.getPreviousState( coords );
+				state = Vivarium.board.getOldState( coords );
 				liveNeighborCount = Vivarium.board.getLiveNeighborCount( coords );
 				// Death by underpopulation or overpopulation
 				if ( state === 1 && ( liveNeighborCount < 2 || liveNeighborCount > 3 ) ) {
@@ -252,122 +233,122 @@ var Vivarium = {
 		},
 
 		play: function () {
-			if ( this.playing ) {
-				return; // If the game is already playing, exit
+			if ( Vivarium.game.playing ) {
+				return; // The game is already playing
 			}
-			var interval = 1000 / this.speed;
-			this.playing = setInterval( this.next, interval ); // The interval's id is stored in the playing property
+			Vivarium.game.playing = setInterval( Vivarium.game.next, 1 ); // The interval's id is stored in the playing property
 			$( '.VivariumPlayButton' ).hide();
 			$( '.VivariumPauseButton' ).show();
 		},
 
 		pause: function () {
-			if ( !this.playing ) {
-				return; // If the game is already paused, exit
+			if ( !Vivarium.game.playing ) {
+				return; // The game is already paused
 			}
-			clearInterval( this.playing );
-			this.playing = false;
+			clearInterval( Vivarium.game.playing );
+			Vivarium.game.playing = false;
 			$( '.VivariumPlayButton' ).show();
 			$( '.VivariumPauseButton' ).hide();
 		},
 
 		reset: function () {
 			// Reset the game
-			this.setGeneration( 0 );
+			Vivarium.game.pause();
+			Vivarium.game.setGeneration( 0 );
 
 			// Reset the board
-			var board = Vivarium.board;
-			board.centerX = 0;
-			board.centerY = 0;
-			board.currentLiveCells = [];
-			board.refill();
+			Vivarium.board.centerX = 0;
+			Vivarium.board.centerY = 0;
+			Vivarium.board.newLiveCells = [];
+			Vivarium.board.oldLiveCells = [];
+			Vivarium.board.refill();
 		}
 	},
 
 	mouse: {
 		/**
-		 * The distance from the origin of the coordinate system in cells (not pixels)
+		 * The position relative to the origin of the coordinate system of the board (in cells, not pixels)
 		 */
-		currentX: null,
-		currentY: null,
-		previousX: null,
-		previousY: null,
+		newX: null,
+		newY: null,
+		oldX: null,
+		oldY: null,
 
 		state: 'up', // up, down or drag
-		upAction: null,
-		dragAction: null,
-		downAction: null,
+		onUp: null,
+		onDrag: null,
+		onDown: null,
 
 		/* Getters */
 
-		getCurrentX: function ( event ) {
-			var board = Vivarium.board;
-			var offsetX = event.pageX - $( event.target ).offset().left - 1; // The -1 is to correct a minor displacement
-			return board.centerX - Math.floor( board.xCells / 2 ) + Math.floor( offsetX / board.cellSize );
+		getNewX: function ( event ) {
+			var board = Vivarium.board,
+				offsetX = event.pageX - $( event.target ).offset().left - 1, // The -1 is to correct a minor displacement
+				newX = board.centerX - Math.floor( board.xCells / 2 ) + Math.floor( offsetX / board.cellSize );
+			return newX;
 		},
 
-		getCurrentY: function ( event ) {
-			var board = Vivarium.board;
-			var offsetY = event.pageY - $( event.target ).offset().top - 2; // The -2 is to correct a minor displacement
-			return board.centerY - Math.floor( board.yCells / 2 ) + Math.floor( offsetY / board.cellSize );
+		getNewY: function ( event ) {
+			var board = Vivarium.board,
+				offsetY = event.pageY - $( event.target ).offset().top - 2, // The -2 is to correct a minor displacement
+				newY = board.centerY - Math.floor( board.yCells / 2 ) + Math.floor( offsetY / board.cellSize );
+			return newY;
 		},
 
 		/* Events */
 
 		up: function ( event ) {
-			this.state = 'up';
-			if ( this.upAction ) {
-				this[ this.upAction ]( event );
+			Vivarium.mouse.state = 'up';
+			if ( Vivarium.mouse.onUp ) {
+				Vivarium.mouse.onUp( event );
 			}
 		},
 
 		move: function ( event ) {
-			this.previousX = this.currentX;
-			this.previousY = this.currentY;
-			this.currentX = this.getCurrentX( event );
-			this.currentY = this.getCurrentY( event );
+			Vivarium.mouse.oldX = Vivarium.mouse.newX;
+			Vivarium.mouse.oldY = Vivarium.mouse.newY;
+			Vivarium.mouse.newX = Vivarium.mouse.getNewX( event );
+			Vivarium.mouse.newY = Vivarium.mouse.getNewY( event );
 
 			// If the mouse is being dragged, not just moved
-			var moved = ( this.currentX - this.previousX ) || ( this.currentY - this.previousY );
-			if ( this.state === 'down' && moved && this.dragAction ) {
-				this[ this.dragAction ]( event );
+			var moved = ( Vivarium.mouse.newX - Vivarium.mouse.oldX ) || ( Vivarium.mouse.newY - Vivarium.mouse.oldY );
+			if ( Vivarium.mouse.state === 'down' && moved && Vivarium.mouse.onDrag ) {
+				Vivarium.mouse.onDrag( event );
 			}
 		},
 
 		down: function ( event ) {
-			this.state = 'down';
-			if ( this.downAction ) {
-				this[ this.downAction ]( event );
+			Vivarium.mouse.state = 'down';
+			if ( Vivarium.mouse.onDown ) {
+				Vivarium.mouse.onDown( event );
 			}
-		},
+		}
+	},
 
-		/* Actions */
+	moveBoard: function ( event ) {
+		Vivarium.board.centerX += Vivarium.mouse.oldX - Vivarium.mouse.newX;
+		Vivarium.board.centerY += Vivarium.mouse.oldY - Vivarium.mouse.newY;
+		Vivarium.board.refill();
 
-		moveBoard: function ( event ) {
-			Vivarium.board.centerX += this.previousX - this.currentX;
-			Vivarium.board.centerY += this.previousY - this.currentY;
-			Vivarium.board.refill();
+		// Bugfix: without the following, the board flickers when moving, not sure why
+		Vivarium.mouse.newX = Vivarium.mouse.getNewX( event );
+		Vivarium.mouse.newY = Vivarium.mouse.getNewY( event );
+	},
 
-			// Bugfix: without this, the board flickers when moving, not sure why
-			this.currentX = this.getCurrentX( event );
-			this.currentY = this.getCurrentY( event );
-		},
-
-		addRemoveCell: function ( event ) {
-			Vivarium.game.pause();
-			var coords = String( this.currentX + ',' + this.currentY );
-			if ( Vivarium.board.getCurrentState( coords ) === 0 ) {
-				Vivarium.board.addCell( coords );
-			} else {
-				Vivarium.board.removeCell( coords );
-			}
+	addRemoveCell: function ( event ) {
+		Vivarium.game.pause();
+		var coords = String( Vivarium.mouse.newX + ',' + Vivarium.mouse.newY );
+		if ( Vivarium.board.getNewState( coords ) === 0 ) {
+			Vivarium.board.addCell( coords );
+		} else {
+			Vivarium.board.removeCell( coords );
 		}
 	},
 
 	board: {
 
-		canvas: {},
-		context: {},
+		canvas: null,
+		context: null,
 
 		width: null,
 		height: null,
@@ -385,8 +366,8 @@ var Vivarium = {
 		/**
 		 * These arrays hold the coordinates of the live cells
 		 */
-		currentLiveCells: [],
-		previousLiveCells: [],
+		newLiveCells: [],
+		oldLiveCells: [],
 
 		/* Getters */
 
@@ -402,14 +383,14 @@ var Vivarium = {
 		 * Takes a string of coordinates (like "23,-75")
 		 * and returns the state of the cell
 		 */
-		getCurrentState: function ( coords ) {
-			if ( Vivarium.board.currentLiveCells.indexOf( coords ) === -1 ) {
+		getNewState: function ( coords ) {
+			if ( Vivarium.board.newLiveCells.indexOf( coords ) === -1 ) {
 				return 0; // Dead
 			}
 			return 1; // Alive
 		},
-		getPreviousState: function ( coords ) {
-			if ( Vivarium.board.previousLiveCells.indexOf( coords ) === -1 ) {
+		getOldState: function ( coords ) {
+			if ( Vivarium.board.oldLiveCells.indexOf( coords ) === -1 ) {
 				return 0; // Dead
 			}
 			return 1; // Alive
@@ -443,7 +424,7 @@ var Vivarium = {
 			var neighbors = Vivarium.board.getNeighbors( coords ),
 				liveNeighborCount = 0;
 			for ( var i = 0, len = neighbors.length; i < len; i++ ) {
-				if ( Vivarium.board.previousLiveCells.indexOf( neighbors[ i ] ) > -1 ) {
+				if ( Vivarium.board.oldLiveCells.indexOf( neighbors[ i ] ) > -1 ) {
 					liveNeighborCount++;
 				}
 			}
@@ -478,19 +459,24 @@ var Vivarium = {
 		/* Actions */
 
 		zoomIn: function () {
-			if ( this.cellSize === 32 ) {
+			if ( Vivarium.board.cellSize === 32 ) {
 				return;
 			}
-			this.setCellSize( this.cellSize * 2 );
-			this.refill();
+			Vivarium.board.setCellSize( Vivarium.board.cellSize * 2 );
+			Vivarium.board.refill();
 		},
 
 		zoomOut: function () {
-			if ( this.cellSize === 1 ) {
+			if ( Vivarium.board.cellSize === 1 ) {
 				return;
 			}
-			this.setCellSize( this.cellSize / 2 );
-			this.refill();
+			Vivarium.board.setCellSize( Vivarium.board.cellSize / 2 );
+			Vivarium.board.refill();
+		},
+
+		toggleGrid: function () {
+			Vivarium.board.grid = Vivarium.board.grid === true ? false : true;
+			Vivarium.board.refill();
 		},
 
 		drawGrid: function () {
@@ -511,8 +497,8 @@ var Vivarium = {
 		},
 
 		fill: function () {
-			for ( var i = 0, len = this.currentLiveCells.length; i < len; i++ ) {
-				Vivarium.board.fillCell( this.currentLiveCells[ i ] );
+			for ( var i = 0, len = this.newLiveCells.length; i < len; i++ ) {
+				Vivarium.board.fillCell( this.newLiveCells[ i ] );
 			}
 			if ( this.grid ) {
 				this.drawGrid();
@@ -548,7 +534,6 @@ var Vivarium = {
 		},
 
 		clearCell: function ( coords ) {
-			console.log(2);
 			var coords = coords.split( ',' ),
 				x = coords[0],
 				y = coords[1],
@@ -557,7 +542,6 @@ var Vivarium = {
 				maxX = minX + this.xCells,
 				maxY = minY + this.yCells;
 			if ( x < minX || y < minY || x > maxX || y > maxY ) {
-			console.log(1);
 				return; // If the cell is beyond view, there's no need to erase it
 			}
 			var rectX = Math.abs( this.centerX - Math.floor( this.xCells / 2 ) - x ) * this.cellSize,
@@ -568,14 +552,13 @@ var Vivarium = {
 		},
 
 		addCell: function ( coords ) {
-			this.currentLiveCells.push( coords );
+			this.newLiveCells.push( coords );
 			this.fillCell( coords );
 		},
 
 		removeCell: function ( coords ) {
-			console.log(3);
-			var index = this.currentLiveCells.indexOf( coords );
-			this.currentLiveCells.splice( index, 1 ); // Remove the coords from the array
+			var index = this.newLiveCells.indexOf( coords );
+			this.newLiveCells.splice( index, 1 ); // Remove the coords from the array
 			this.clearCell( coords );
 		}
 	}

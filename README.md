@@ -9,7 +9,7 @@ None known!
 
 Tasks
 -----
-* Load some nice patterns
+* Improve the demos
 * Documentation
 * Generalize so that more than one widget can be placed in the same page
 * Improve performance

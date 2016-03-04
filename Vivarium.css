@@ -5,6 +5,7 @@
 .VivariumCanvas {
 	background: black;
 	display: block;
+	width: 600px;
 }
 
 .VivariumMenu {

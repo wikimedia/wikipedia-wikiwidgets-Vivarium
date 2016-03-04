@@ -159,7 +159,7 @@ var Vivarium = {
 
 		// Autoplay the first pattern
 		Vivarium.game.nextPattern();
-		Vivarium.game.play();
+		//Vivarium.game.play();
 	},
 
 	gui: {

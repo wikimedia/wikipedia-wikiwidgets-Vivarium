@@ -1,6 +1,6 @@
 /**
  * This file contains a minimal replacement of the mw object
- * So that the widget can run in index.php without MediaWiki
+ * so that the demo can run without MediaWiki
  */
 mw = {
 	config: {

@@ -5,7 +5,6 @@
 .VivariumCanvas {
 	background: black;
 	display: block;
-	width: 600px;
 }
 
 .VivariumMenu {
@@ -23,16 +22,19 @@
 	background: #a7dcff;
 }
 
-.VivariumGenerationCounter {
+.VivariumCounter {
 	color: white;
 	font-size: small;
+	pointer-events: none;
 	position: absolute;
-	top: 5px; left: 5px;
+	left: 5px;
+	text-shadow: 0 0 5px black;
+}
+
+.VivariumGenerationCounter {
+	top: 5px;
 }
 
 .VivariumPopulationCounter {
-	color: white;
-	font-size: small;
-	position: absolute;
-	top: 20px; left: 5px;
+	top: 20px;
 }

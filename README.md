@@ -9,9 +9,5 @@ None known!
 
 Tasks
 -----
-* Improve the demos
+* Responsive
 * Documentation
-* Generalize so that more than one widget can be placed in the same page
-* Improve performance
-* Board resizing?
-* Mobile version
